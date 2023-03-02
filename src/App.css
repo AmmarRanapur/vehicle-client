@@ -29,5 +29,6 @@
 .addBtn{
   width:150px;
   margin-bottom:10px;
-  border-radius: 0px !important;
+  background-color:cadetblue !important;
+  color: white !important;
 }
