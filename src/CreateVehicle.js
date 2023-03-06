@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {useState} from 'react';
 import './CreateVehicle.css';
+import {useNavigate} from "react-router-dom";
 
 function CreateVehicle(props){
     const [vin,setVin] = useState('')
@@ -8,6 +9,7 @@ function CreateVehicle(props){
     const [model,setModel] = useState('')
     const [year,setYear] = useState('')
     const [description,setDescription] = useState('')
+    const navigate = useNavigate();
     return(
         <div className="form-container">
             <form>
@@ -47,6 +49,7 @@ function CreateVehicle(props){
         IsActive:true
     }).then((response)=>{
         console.log(response);
+        navigate('/');
     }).catch((err)=>console.log(err));
   }}>ADD</button>
         </div>
