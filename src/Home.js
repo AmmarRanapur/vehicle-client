@@ -23,7 +23,7 @@ function Home(props) {
         console.log(error);
       });
   };
-  
+
   function removeVehicle(id) {
     axios
       .delete("https://localhost:7288/vehicle/" + id)
@@ -34,6 +34,9 @@ function Home(props) {
       .catch((error) => {
         console.log(error);
       });
+  }
+  function editVehicle(vehicle){
+    navigate('/Add',{state:vehicle});
   }
   return (
     <div className="main-div">
@@ -65,7 +68,9 @@ function Home(props) {
                 <td>{item.Model}</td>
                 <td>{item.Description}</td>
                 <td>
-                  <button disabled class="btn btn-primary">
+                  <button class="btn btn-primary" onClick={()=>{
+                    editVehicle(item);
+                  }}>
                     Edit
                   </button>
                   <button

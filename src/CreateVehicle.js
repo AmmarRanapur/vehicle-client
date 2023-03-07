@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CreateVehicle.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function CreateVehicle(props) {
   const [vin, setVin] = useState("");
@@ -10,7 +10,50 @@ function CreateVehicle(props) {
   const [year, setYear] = useState("");
   const [description, setDescription] = useState("");
   const navigate = useNavigate();
-
+  const { state } = useLocation();
+  useEffect(() => {
+    if (state) {
+      console.log("inside useEffect");
+      setVin(state.VIN);
+      setMake(state.Make);
+      setModel(state.Model);
+      setYear(state.Year);
+      setDescription(state.Description);
+    }
+  }, []);
+  function addVehicle() {
+    if (state) {
+      axios
+        .put("https://localhost:7288/vehicle/" + state.Id, {
+          VIN: vin,
+          Make: make,
+          Model: model,
+          Year: year,
+          Description: description,
+          IsActive: true,
+        })
+        .then((response) => {
+          console.log(response);
+          navigate("/");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      axios
+        .post("https://localhost:7288/vehicle", {
+          VIN: vin,
+          Make: make,
+          Model: model,
+          Year: year,
+          Description: description,
+          IsActive: true,
+        })
+        .then((response) => {
+          console.log(response);
+          navigate("/");
+        })
+        .catch((err) => console.log(err));
+    }
+  }
   return (
     <div className="form-container">
       <form>
@@ -22,6 +65,7 @@ function CreateVehicle(props) {
               class="form-control"
               id="input1"
               placeholder="VIN"
+              value={vin}
               onChange={(e) => setVin(e.target.value)}
             />
           </div>
@@ -32,6 +76,7 @@ function CreateVehicle(props) {
               class="form-control"
               id="input2"
               placeholder="Make"
+              value={make}
               onChange={(e) => setMake(e.target.value)}
             />
           </div>
@@ -44,6 +89,7 @@ function CreateVehicle(props) {
               class="form-control"
               id="input3"
               placeholder="Model"
+              value={model}
               onChange={(e) => setModel(e.target.value)}
             />
           </div>
@@ -54,6 +100,7 @@ function CreateVehicle(props) {
               class="form-control"
               id="input4"
               placeholder="Year"
+              value={year}
               onChange={(e) => setYear(e.target.value)}
             />
           </div>
@@ -64,6 +111,7 @@ function CreateVehicle(props) {
             class="form-control"
             id="input5"
             rows="3"
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
@@ -71,22 +119,7 @@ function CreateVehicle(props) {
       <button
         class="btn btn-primary"
         style={{ marginTop: "10px" }}
-        onClick={() => {
-          axios
-            .post("https://localhost:7288/vehicle", {
-              VIN: vin,
-              Make: make,
-              Model: model,
-              Year: year,
-              Description: description,
-              IsActive: true,
-            })
-            .then((response) => {
-              console.log(response);
-              navigate("/");
-            })
-            .catch((err) => console.log(err));
-        }}
+        onClick={addVehicle}
       >
         ADD
       </button>
