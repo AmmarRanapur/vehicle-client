@@ -1,12 +1,35 @@
 import "./App.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { Button, IconAdd, IconDelete, IconEdit } from "cdk-radial";
+import styled from "styled-components";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-balham.css";
+import { AgGridReact } from "ag-grid-react";
+import classNames from "classnames";
+import {
+  TableContainer,
+  TableHeader,
+  TableFooter,
+  TableColumnDndContainer,
+  IconRenderer,
+  TextRenderer,
+  RatingRenderer,
+  CELL_CLASSES,
+  CELL_ICON_TYPE,
+  CELL_RENDERERS,
+  COLUMN_TYPES,
+  DEFAULT_ROWS_PER_PAGE_OPTIONS,
+} from "cdk-radial";
+import {useSelector,useDispatch} from 'react-redux';
+import {updateList} from './features/vehicles';
 
 function Home(props) {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [vehicleList, setVehicleList] = useState([]);
+  const globalVehicleList = useSelector((state)=>state.vehicles.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getFromApi();
@@ -17,12 +40,23 @@ function Home(props) {
       .get("https://localhost:7288/vehicle")
       .then((response) => {
         setVehicleList(response.data.filter((ele) => ele.IsActive));
+        // dispatch(updateList(response.data.filter((ele) => ele.IsActive)));
         console.log(vehicleList);
       })
       .catch((error) => {
         console.log(error);
       });
   };
+  const StyledIconDelete = styled(IconDelete)`
+    fill: ${({ theme }) => theme.color.secondary.cherryBombRed[500].value};
+    cursor: pointer;
+  `;
+
+  const StyledIconEdit = styled(IconEdit)`
+    fill: ${({ theme }) => theme.color.secondary.cookieMonsterBlue[500].value};
+    margin-right: 7px;
+    cursor: pointer;
+  `;
 
   function removeVehicle(id) {
     axios
@@ -35,15 +69,28 @@ function Home(props) {
         console.log(error);
       });
   }
-  function editVehicle(vehicle){
-    navigate('/Add',{state:vehicle});
+  function editVehicle(vehicle) {
+    history.push("/Add", { vehicle });
   }
+  const columnDefs = [
+    { headerName: "Make", field: "make" },
+    { headerName: "Model", field: "model" },
+    { headerName: "Price", field: "price" },
+  ];
+  const rowData = [
+    { make: "Toyota", model: "Celica", price: 35000 },
+    { make: "Ford", model: "Mondeo", price: 32000 },
+    { make: "Porsche", model: "Boxster", price: 72000 },
+  ];
   return (
     <div className="main-div">
       <div className="btnDiv">
-        <button class="btn addBtn" onClick={() => navigate("/Add")}>
-          ADD
-        </button>
+        <Button
+          icon={<IconAdd />}
+          className="addBtn"
+          text="Add"
+          onClick={() => history.push("/Add")}
+        />
       </div>
       <table class="table">
         <thead class="table-dark">
@@ -68,21 +115,16 @@ function Home(props) {
                 <td>{item.Model}</td>
                 <td>{item.Description}</td>
                 <td>
-                  <button class="btn btn-primary" onClick={()=>{
-                    editVehicle(item);
-                  }}>
-                    Edit
-                  </button>
-                  <button
-                    class="btn btn-danger"
-                    style={{ marginLeft: "5px" }}
+                  <StyledIconEdit
+                    onClick={() => {
+                      editVehicle(item);
+                    }}
+                  />
+                  <StyledIconDelete
                     onClick={(event) => {
                       removeVehicle(item.Id);
                     }}
-                  >
-                    {" "}
-                    Remove
-                  </button>
+                  />
                 </td>
               </tr>
             ))}

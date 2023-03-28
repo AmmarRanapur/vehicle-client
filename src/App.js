@@ -1,20 +1,10 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./Home";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateVehicle from "./CreateVehicle";
+import { BrowserRouter,Route, Switch } from "react-router-dom";
 
 function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Home />,
-    },
-    {
-      path: "/Add",
-      element: <CreateVehicle />,
-    },
-  ]);
   return (
     <div className="App">
       <header className="App-header">
@@ -24,7 +14,12 @@ function App() {
           height={"30px"}
         />
       </header>
-      <RouterProvider router={router} />
+      <BrowserRouter>
+      <Switch>
+        <Route path="/Add"><CreateVehicle /></Route>
+        <Route path="/"><Home /></Route>
+      </Switch>
+      </BrowserRouter>
     </div>
   );
 }

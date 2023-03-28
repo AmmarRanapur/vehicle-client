@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./CreateVehicle.css";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 function CreateVehicle(props) {
   const [vin, setVin] = useState("");
@@ -9,22 +9,22 @@ function CreateVehicle(props) {
   const [model, setModel] = useState("");
   const [year, setYear] = useState("");
   const [description, setDescription] = useState("");
-  const navigate = useNavigate();
   const { state } = useLocation();
+  const history = useHistory();
+
   useEffect(() => {
     if (state) {
-      console.log("inside useEffect");
-      setVin(state.VIN);
-      setMake(state.Make);
-      setModel(state.Model);
-      setYear(state.Year);
-      setDescription(state.Description);
+      setVin(state.vehicle.VIN);
+      setMake(state.vehicle.Make);
+      setModel(state.vehicle.Model);
+      setYear(state.vehicle.Year);
+      setDescription(state.vehicle.Description);
     }
   }, []);
   function addVehicle() {
     if (state) {
       axios
-        .put("https://localhost:7288/vehicle/" + state.Id, {
+        .put("https://localhost:7288/vehicle/" + state.vehicle.Id, {
           VIN: vin,
           Make: make,
           Model: model,
@@ -34,7 +34,7 @@ function CreateVehicle(props) {
         })
         .then((response) => {
           console.log(response);
-          navigate("/");
+          history.push("/");
         })
         .catch((err) => console.log(err));
     } else {
@@ -49,7 +49,7 @@ function CreateVehicle(props) {
         })
         .then((response) => {
           console.log(response);
-          navigate("/");
+          history.push("/");
         })
         .catch((err) => console.log(err));
     }
